@@ -55,27 +55,27 @@ export default defineThemeConfig({
   },
 
   locales: {
-    "/": {
-      // navbar
-      navbar: navbar.en,
+    // "/": {
+    //   // navbar
+    //   navbar: navbar.en,
 
-      // sidebar
-      sidebar: sidebar.en,
+    //   // sidebar
+    //   sidebar: sidebar.en,
 
-      footer: "Default footer",
+    //   footer: "Default footer",
 
-      displayFooter: true,
+    //   displayFooter: true,
 
-      blog: {
-        description: "A FrontEnd programmer",
-        intro: "/intro.html",
-      },
-    },
+    //   blog: {
+    //     description: "A FrontEnd programmer",
+    //     intro: "/intro.html",
+    //   },
+    // },
 
     /**
      * Chinese locale config
      */
-    "/zh/": {
+    "/": {
       // navbar
       navbar: navbar.zh,
 
