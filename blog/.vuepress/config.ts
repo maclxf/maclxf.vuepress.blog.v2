@@ -2,7 +2,7 @@ import { defineHopeConfig } from "vuepress-theme-hope";
 import themeConfig from "./themeConfig";
 
 export default defineHopeConfig({
-  base: "/",
+  base: "/maclxf.vuerepss.blog.v2/",
 
   dest: "./dist",
 
