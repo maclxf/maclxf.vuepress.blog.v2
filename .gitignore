@@ -1,0 +1,9 @@
+# Node modules
+node_modules/
+
+# Vuepress Cache
+blog/.vuepress/.cache/
+# Vuepress Temp
+blog/.vuepress/.temp/
+# Vuepress Output
+dist/
