@@ -7,3 +7,5 @@ blog/.vuepress/.cache/
 blog/.vuepress/.temp/
 # Vuepress Output
 dist/
+
+blog/en/
