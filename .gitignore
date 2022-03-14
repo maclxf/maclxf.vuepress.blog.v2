@@ -8,5 +8,5 @@ blog/.vuepress/.temp/
 # Vuepress Output
 dist/
 
-blog/en/
-blog/zh/
+en.back
+zh.back
