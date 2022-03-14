@@ -6,8 +6,8 @@ export default defineThemeConfig({
   hostname: "https://vuepress-theme-hope-v2-demo.mrhope.site",
 
   author: {
-    name: "Mr.Hope",
-    url: "https://mrhope.site",
+    name: "Maclxf",
+    url: "",
   },
 
   iconPrefix: "iconfont icon-",
@@ -87,7 +87,7 @@ export default defineThemeConfig({
       displayFooter: true,
 
       blog: {
-        description: "一个前端开发者",
+        description: "当一个撒子都会点的开发者",
         intro: "/intro.html",
       },
     },

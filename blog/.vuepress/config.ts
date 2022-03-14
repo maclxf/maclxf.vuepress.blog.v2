@@ -24,8 +24,8 @@ export default defineHopeConfig({
     // },
     "/": {
       lang: "zh-CN",
-      title: "主题演示",
-      description: "vuepress-theme-hope 的演示",
+      title: "Maclxf Blog",
+      description: "Maclxf Blog vuepress",
     },
   },
 
