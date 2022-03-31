@@ -15,36 +15,28 @@ export const zh = defineSidebarConfig({
     // },
     {
       text: "文章",
-      icon: "note",
+      icon: "blog",
       prefix: "posts/",
       children: [
         {
-          text: "php",
+          text: "Php",
           icon: "php",
-          collapsable: true,
           prefix: "php/",
           //children: ["article1", "article2", "article3", "article4"],
           children: [],
         },
         {
-          text: "weapp",
+          text: "WeApp",
           prefix: "weapp/",
           icon: "wechat",
-          children: [
-            // {
-            //   text: "文章 5-8",
-            //   icon: "note",
-            //   collapsable: true,
-            //   prefix: "article/",
-            //   children: ["article5", "article6", "article7", "article8"],
-            // },
-            // {
-            //   text: "文章 9-12",
-            //   icon: "note",
-            //   children: ["article9", "article10", "article11", "article12"],
-            // },
-          ],
+          children: [],
         },
+        {
+            text: "Github",
+            prefix: "github/",
+            icon: "github",
+            children: ["github-action"],
+          },
       ],
     },
   ],
