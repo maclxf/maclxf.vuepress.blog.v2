@@ -82,7 +82,7 @@ export default defineThemeConfig({
       // sidebar
       sidebar: sidebar.zh,
 
-      footer: "默认页脚",
+      footer: "https://github.com/maclxf",
 
       displayFooter: true,
 

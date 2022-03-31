@@ -1,5 +1,5 @@
 import { defineNavbarConfig } from "vuepress-theme-hope";
-
+// 顶部栏配置
 export const zh = defineNavbarConfig([
   "/",
   //"/home",
