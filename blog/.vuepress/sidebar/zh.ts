@@ -22,14 +22,13 @@ export const zh = defineSidebarConfig({
           text: "Php",
           icon: "php",
           prefix: "php/",
-          //children: ["article1", "article2", "article3", "article4"],
           children: [],
         },
         {
           text: "WeApp",
           prefix: "weapp/",
           icon: "wechat",
-          children: [],
+          children: ['life-cycle'],
         },
         {
             text: "Github",
