@@ -45,7 +45,7 @@ hide	无	组件所在的页面被隐藏时执行	2.2.3
 resize	Object Size	组件所在的页面尺寸变化时执行	2.4.0
 
 从截图组件的生命周期有个特点是先于页面的生命周期
-![weapp-life-cycle-compontent](/images/weapp-life-cycle-compontent.jpg)
+![weapp-life-cycle-compontent](/images/weapp-life-cycle-component.jpg)
 
 
 
