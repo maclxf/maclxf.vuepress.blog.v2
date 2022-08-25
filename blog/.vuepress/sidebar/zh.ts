@@ -21,7 +21,7 @@ export const zh = defineSidebarConfig({
         {
             text: "Ci",
             icon: "ci",
-            prefix: "ci/",
+            prefix: "ci4/",
             children: ['ci-init'],
         },
         {
