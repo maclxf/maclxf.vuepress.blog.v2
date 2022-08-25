@@ -19,6 +19,18 @@ export const zh = defineSidebarConfig({
       prefix: "posts/",
       children: [
         {
+            text: "Ci",
+            icon: "ci",
+            prefix: "ci/",
+            children: ['ci-init'],
+        },
+        {
+            text: "Mysql",
+            icon: "mysql",
+            prefix: "mysql/",
+            children: ['update-join'],
+        },
+        {
           text: "Php",
           icon: "php",
           prefix: "php/",
@@ -28,7 +40,7 @@ export const zh = defineSidebarConfig({
           text: "WeApp",
           prefix: "weapp/",
           icon: "wechat",
-          children: ['life-cycle'],
+          children: ['life-cycle', 'subpackage', 'double-thread'],
         },
         {
             text: "Github",
