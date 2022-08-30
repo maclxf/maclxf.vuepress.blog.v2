@@ -22,7 +22,7 @@ export const zh = defineSidebarConfig({
             text: "Ci",
             icon: "ci",
             prefix: "ci4/",
-            children: ['ci-init'],
+            children: ['ci4-init'],
         },
         {
             text: "Mysql",
