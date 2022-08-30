@@ -28,7 +28,7 @@ export const zh = defineSidebarConfig({
             text: "Mysql",
             icon: "mysql",
             prefix: "mysql/",
-            children: ['update-join'],
+            children: ['use-sql'],
         },
         {
           text: "Php",
@@ -46,7 +46,7 @@ export const zh = defineSidebarConfig({
             text: "Github",
             prefix: "github/",
             icon: "github",
-            children: ["github-action"],
+            children: ["github-action", "git-commit"],
           },
       ],
     },

@@ -1,4 +1,16 @@
-ci4-init.md
+---
+title: CI4 安装过程记录
+icon: codeigniter4
+star: true
+date: 2022-08-30
+sticky: true
+category:
+  - 收集
+tag:
+  - 收集
+# home: true
+# footer: start footer
+---
 
 ## 安装
 ```
