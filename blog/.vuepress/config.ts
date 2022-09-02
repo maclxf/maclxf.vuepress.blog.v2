@@ -6,8 +6,8 @@ import themeConfig from "./themeConfig";
 export default defineHopeConfig({
   //https://vuepress.vuejs.org/zh/guide/assets.html#基础路径
   // 主要是根据你打包的路径来如果不是跟路径就要把这个名字加上否则/即可
-  base: "/maclxf.vuepress.blog.v2/",
-
+  // base: "/maclxf.vuepress.blog.v2/", //https://maclxf.github.io/maclxf.vuepress.blog.v2这是我最开始成功可以用的路径
+  base: "/", // 开始切换http://blog.maclxf.top
   dest: "./dist",
 
   head: [
