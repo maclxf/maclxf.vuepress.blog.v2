@@ -48,6 +48,12 @@ export const zh = defineSidebarConfig({
             icon: "github",
             children: ["github-action", "git-commit"],
           },
+          {
+            text: "Docker",
+            prefix: "docker/",
+            icon: "docker",
+            children: ["docker-compose-nginx-php", 'docker-file'],
+          }
       ],
     },
   ],
