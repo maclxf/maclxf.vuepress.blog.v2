@@ -37,6 +37,7 @@ tag:
 * `docker-compose logs xxx`    View output from containers
 
 ### 附Compose.yaml
+mysql在宿主机
 ```YAML
 version: "3" # 指定compose版本， 目前主流版本3.x，支持docker1.13.0及以上的版本
 services: # 定义服务信息
@@ -78,6 +79,132 @@ services: # 定义服务信息
 networks:
     net-app:
 ```
+mysql在docker上
+```YAML
+version: "3"
+services:
+    nginx:
+        image: nginx:latest
+        container_name: "compose-nginx"
+        restart: always
+        ports:
+            - "8001:80"
+            - "4431:443"
+        environment:
+           - TZ=Asia/Shanghai
+        depends_on:
+           - "php"
+        volumes:
+           - "/home/docker-compose/nginx-php8/nginx/conf.d:/etc/nginx/conf.d"
+           - "/home/docker-compose/nginx-php8/www:/usr/share/nginx/html"
+           - "/home/docker-compose/nginx-php8/nginx/log:/var/log/nginx"
+        networks:
+           - net-app
+    php:
+        build: './php'
+        image: maclxf:php8.1.12-bc
+        container_name: "compose-php"
+        restart: always
+        ports:
+           - "9002:9000"
+        environment:
+           - TZ=Asia/Shanghai
+        volumes:
+           - "/home/docker-compose/nginx-php8/www:/usr/share/nginx/html"
+        networks:
+           - net-app
+    mysql:
+        image: mysql:5.7
+        container_name: "compose-mysql"
+        restart: always
+        ports:
+           - "3307:3306"
+        volumes:
+           - "/home/docker-compose/nginx-php8/mysql/data:/var/lib/mysql"
+           - "/home/docker-compose/nginx-php8/mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf"
+        environment:
+           - "MYSQL_ROOT_PASSWORD=111111"
+        networks:
+           - net-app
+networks:
+    net-app:
+```
+
+### 特别说明坑
+关于适用数据库有两种方式
+方式一 使用宿主机的mysql
+    我尝试的是这种方式用几个坑解决方式参考了这里 https://www.cnblogs.com/haiton/p/11064727.html
+    1. 宿主机ip 和 容器的ip
+        * 代码运行在容器中调用宿主的mysql 相当于就是访问远程的数据库（所以不用构建mysql的容器），那么容器中代码配置远程数据数据库的ip应该怎么填
+        这里要用到两个命令 宿主机 `ifconfig` 找到 `docker0 172.17.0.1`，宿主机 `docker network inspect networknamexxxx` 找到 `Gateway 192.168.144.1`，代码配置中填入 172.17.0.1，宿主机允许 192.168.144.1 访问，那么这样就把mysql请求发出来了
+        * 上面这种做法，我在重启过电脑之后就不行了（找不到），改了半天将代码配置填入 172.18.0.1，宿主机允许 172.18.0.2 就可以了
+        ```json
+            $ docker network inspect nginx-php8_net-app
+            [
+                {
+                    "Name": "nginx-php8_net-app",
+                    "Id": "68aac6a9843a4159efce63e8bb2c06b431da735f9cb24708a002c67818607967",
+                    "Created": "2022-12-10T10:32:14.4382743+08:00",
+                    "Scope": "local",
+                    "Driver": "bridge",
+                    "EnableIPv6": false,
+                    "IPAM": {
+                        "Driver": "default",
+                        "Options": null,
+                        "Config": [
+                            {
+                                "Subnet": "172.18.0.0/16",
+                                "Gateway": "172.18.0.1"
+                            }
+                        ]
+                    },
+                    "Internal": false,
+                    "Attachable": false,
+                    "Ingress": false,
+                    "ConfigFrom": {
+                        "Network": ""
+                    },
+                    "ConfigOnly": false,
+                    "Containers": {
+                        "12ae94d5000117d726aeb90df3bc1a16a5c6c0a2fc2fd5ad9342ed843d022deb": {
+                            "Name": "compose-nginx",
+                            "EndpointID": "ab0abe224db399bc691f476cf1c7e78d0fcfd5e6e12a0451769d23213b816567",
+                            "MacAddress": "02:42:ac:12:00:03",
+                            "IPv4Address": "172.18.0.3/16",
+                            "IPv6Address": ""
+                        },
+                        "94efe0e8b9d9f619655ea1562101a7887643f683a94d58bbeafc50ed0bb50a1d": {
+                            "Name": "compose-php",
+                            "EndpointID": "ef1c466d0a5cb4799cebce1118f7cf3bb9013fe6f23edb311f34b221b40fbd8b",
+                            "MacAddress": "02:42:ac:12:00:02",
+                            "IPv4Address": "172.18.0.2/16",
+                            "IPv6Address": ""
+                        }
+                    },
+                    "Options": {},
+                    "Labels": {
+                        "com.docker.compose.network": "net-app",
+                        "com.docker.compose.project": "nginx-php8",
+                        "com.docker.compose.version": "2.12.2"
+                    }
+                }
+            ]
+        ```
+        > 上面这段json可以看出 Containers 12ae94d5000117d726aeb90df3bc1a16a5c6c0a2fc2fd5ad9342ed843d022deb 对应 compose-nginx 94efe0e8b9d9f619655ea1562101a7887643f683a94d58bbeafc50ed0bb50a1d 对应 94efe0e8b9d9f619655ea1562101a7887643f683a94d58bbeafc50ed0bb50a1d，读数据的请求从 compose-php 的ip 172.18.0.2给到 172.18.0.1，由这个在统一发出去到外部（过程是我猜的只做参考）
+        https://m.tongfu.net/home/35/blog/513305.html
+        https://m.tongfu.net/home/35/blog/513355.html
+    2. 注意要去掉 /etc/mysql/mysql.conf/mysql.cof中bind address 127.0.0.1否则会被mysql拒绝
+    3. grant all privileges on *.* to 'root'@'172.17.0.1' identified by 'pswd' with grant option;
+开放所有权限给root,当root以pswd(不一定是root登录密码,仅作为情景下登录的密码)密码从 172.17.0.1 登入的时候,允许其操作所有数据库下的所有表(也可以将 *.* 改成特定数据库下的特定表,这个随意).
+    4. 宿主机这种至少在wsl2的docker访问主机的mysql上会慢一点
+    https://www.cnblogs.com/haiton/p/11064727.html
+    https://blog.csdn.net/xs18952904/article/details/106518424
+    https://blog.csdn.net/u010953609/article/details/89445367
+    https://www.jianshu.com/p/3e1fd311ba87
+    https://www.jianshu.com/p/0561d3cfccda
+方式二 使用容器的mysql
+
+
 ### 不明白
 * networks 如何使用不明白
 

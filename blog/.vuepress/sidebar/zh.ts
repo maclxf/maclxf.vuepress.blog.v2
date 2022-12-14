@@ -52,7 +52,7 @@ export const zh = defineSidebarConfig({
             text: "Docker",
             prefix: "docker/",
             icon: "docker",
-            children: ["docker-compose-nginx-php", 'docker-file'],
+            children: ["docker-compose-nginx-php", 'docker-file', 'Portainer'],
           }
       ],
     },
