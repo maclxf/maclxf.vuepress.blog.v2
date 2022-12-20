@@ -130,8 +130,71 @@ networks:
     net-app:
 ```
 
+redis在docker上
+```YAML
+version: "3"
+services:
+    nginx:
+        image: nginx:latest
+        container_name: "compose-nginx"
+        restart: always
+        ports:
+            - "8001:80"
+            - "4431:443"
+        environment:
+           - TZ=Asia/Shanghai
+        depends_on:
+           - "php"
+        volumes:
+           - "/home/docker-compose/nginx-php8/nginx/conf.d:/etc/nginx/conf.d"
+           - "/home/docker-compose/nginx-php8/www:/usr/share/nginx/html"
+           - "/home/docker-compose/nginx-php8/nginx/log:/var/log/nginx"
+        networks:
+           - net-app
+    php:
+        build: './php'
+        image: maclxf:php8.1.12-bc
+        container_name: "compose-php"
+        restart: always
+        ports:
+           - "9002:9000"
+        environment:
+           - TZ=Asia/Shanghai
+        volumes:
+           - "/home/docker-compose/nginx-php8/www:/usr/share/nginx/html"
+        networks:
+           - net-app
+    mysql:
+        image: mysql:5.7
+        container_name: "compose-mysql"
+        restart: always
+        ports:
+           - "3307:3306"
+        volumes:
+           - "/home/docker-compose/nginx-php8/mysql/data:/var/lib/mysql"
+           - "/home/docker-compose/nginx-php8/mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf"
+        environment:
+           - "MYSQL_ROOT_PASSWORD=111111"
+        networks:
+           - net-app
+    redis:
+        image: redis:latest
+        container_name: compose-redis
+        restart: always
+        command: redis-server --requirepass 111111
+        ports:
+            - "6380:6379"
+        volumes:
+            - "/home/docker-compose/nginx-php8/redis/data:/data"
+        networks:
+           - net-app
+networks:
+    net-app:
+```
+
+
 ### 特别说明坑
-关于适用数据库有两种方式
+#### 关于适用数据库有两种方式
 方式一 使用宿主机的mysql
     我尝试的是这种方式用几个坑解决方式参考了这里 https://www.cnblogs.com/haiton/p/11064727.html
     1. 宿主机ip 和 容器的ip
@@ -203,6 +266,52 @@ networks:
     https://www.jianshu.com/p/3e1fd311ba87
     https://www.jianshu.com/p/0561d3cfccda
 方式二 使用容器的mysql
+    见上面yaml
+
+#### 使用composer
+方式一 [参考的网页](https://blog.csdn.net/dfsgwe1231/article/details/105993717)
+直接在yaml中加入如下
+#
+# composer:
+#     image: composer:latest
+#     container_name: "compose-composer"
+#     depends_on: # 设置依赖关系，可以让docker-compose按依赖关系启动
+#        - "php"
+#     volumes:
+#        - "/home/docker-compose/nginx-php8/www/ci4:/app" # 必须要将composer.json 所在文件夹挂到 /app 上否则报找不到composer.json
+#     command: ["composer", "install"] # 执行composer install命令
+这里有个弊端即使用了 depends_on 让php启动后在执行，但是php启动到安装好依赖依旧有段时间，导致在 up 时，一直报错，说没得intl等php 插件
+所以这里只好放弃
+后续找了个方法及方法四还没有试过，可以尝试以下
+
+
+
+方式二
+笨办法办法来安装composer
+
+进入composer-php，但是不妥，各种差东西
+```
+php -r "copy('https://install.phpcomposer.com/installer', 'composer-setup.php');"
+php composer-setup.php
+mv composer.phar /usr/local/bin/composer
+composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+composer selfupdate
+cd /usr/shared/nginx/html/ci4
+composer install
+```
+
+方式三
+再编排一个容器
+
+方式四
+使用wait-for-it
+https://www.jianshu.com/p/9446f210e327
+
+#### redis 安装
+问题主要集中在php 安装 redis扩展上
+本来是希望用 predis 但是最后决定用php的redis扩展，目前的问题是死活安不上扩展
+https://blog.csdn.net/weixin_39873598/article/details/123088978
+https://www.cnblogs.com/Kuju/p/15977101.html
 
 
 ### 不明白
@@ -210,11 +319,12 @@ networks:
 
 ### 参考
 - [Docker ComposeOverview](https://docs.docker.com/compose/)
+- [depends_no 的使用](https://docs.docker.com/compose/compose-file/#depends_on)
 - [compose.yaml 文档](https://docs.docker.com/compose/compose-file/)
 - [compose.yaml 怎么写](https://deepzz.com/post/docker-compose-file.html)
 - [docker-compose搭建nginx+php环境](https://www.cnblogs.com/trblog/p/14065905.html)
 - [docker-compose搭建nginx+php环境](https://www.jianshu.com/p/0561d3cfccda)
 - [Docker 微服务教程](http://www.ruanyifeng.com/blog/2018/02/docker-wordpress-tutorial.html)
-
+- [这一份docker-compose说明更详细](https://blog.csdn.net/weixin_47032745/article/details/117034496)
 
 
