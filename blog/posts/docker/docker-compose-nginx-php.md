@@ -153,7 +153,7 @@ services:
            - net-app
     php:
         build: './php'
-        image: maclxf:php8.1.12-bc
+        image: maclxf:php8.1.12-bc-redis # 改了dockerfile一定要来改名字，因为镜像有了就没有重新构建了
         container_name: "compose-php"
         restart: always
         ports:
@@ -253,7 +253,7 @@ networks:
                 }
             ]
         ```
-        > 上面这段json可以看出 Containers 12ae94d5000117d726aeb90df3bc1a16a5c6c0a2fc2fd5ad9342ed843d022deb 对应 compose-nginx 94efe0e8b9d9f619655ea1562101a7887643f683a94d58bbeafc50ed0bb50a1d 对应 94efe0e8b9d9f619655ea1562101a7887643f683a94d58bbeafc50ed0bb50a1d，读数据的请求从 compose-php 的ip 172.18.0.2给到 172.18.0.1，由这个在统一发出去到外部（过程是我猜的只做参考）
+        > 上面这段json可以看出 Containers 12ae94d5000117d726aeb90df3bc1a16a5c6c0a2fc2fd5ad9342ed843d022deb 对应 compose-nginx 94efe0e8b9d9f619655ea1562101a7887643f683a94d58bbeafc50ed0bb50a1d 对应 94efe0e8b9d9f619655ea1562101a7887643f683a94d58bbeafc50ed0bb50a1d ，读数据的请求从 compose-php 的ip 172.18.0.2给到 172.18.0.1，由这个在统一发出去到外部（过程是我猜的只做参考）
         https://m.tongfu.net/home/35/blog/513305.html
         https://m.tongfu.net/home/35/blog/513355.html
     2. 注意要去掉 /etc/mysql/mysql.conf/mysql.cof中bind address 127.0.0.1否则会被mysql拒绝
@@ -308,10 +308,16 @@ composer install
 https://www.jianshu.com/p/9446f210e327
 
 #### redis 安装
-问题主要集中在php 安装 redis扩展上
-本来是希望用 predis 但是最后决定用php的redis扩展，目前的问题是死活安不上扩展
+问题主要集中在php 安装 redis扩展上 已解决生成的镜像已经存在的原因，记到改了dockerfile就要改镜像名称
+本来是希望用 predis 但是最后决定用php的redis扩展，目前的问题是死活安不上扩展（因为我生成的镜像已经存在的原因，记到改了dockerfile就要改镜像名称 ）
 https://blog.csdn.net/weixin_39873598/article/details/123088978
 https://www.cnblogs.com/Kuju/p/15977101.html
+
+有个奇怪现象
+ci框架连接redis 用的是 net-app 的 gateway
+而ci框架连接mysql 用的却是 net-app 的 ip address
+为何这里不找他自己的 ip address 172.30.0.1 而是用了 gateway 172.30.0.1
+
 
 
 ### 不明白
